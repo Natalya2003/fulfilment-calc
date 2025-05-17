@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Калькулятор фулфилмента</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="calc-container">
+    <h3>Калькулятор фулфилмента</h3>
+    <div class="calc-grid">
+      <label title="Выберите модель работы: FBO — доставка на склад, FBS — отправка со склада">
+        Модель фулфилмента
+        <select id="model">
+          <option value="FBO">FBO (на склад)</option>
+          <option value="FBS">FBS (со склада)</option>
+        </select>
+      </label>
+      <label title="Город, в который поставляется товар. Влияет на сборку">
+        Город
+        <input type="text" id="city" placeholder="Например: Москва" />
+      </label>
+      <label title="Страна, где расположен склад">
+        Страна
+        <select id="country">
+          <option value="Россия">Россия</option>
+          <option value="Казахстан">Казахстан</option>
+          <option value="Беларусь">Беларусь</option>
+          <option value="Китай">Китай</option>
+          <option value="Турция">Турция</option>
+        </select>
+      </label>
+      <label title="Вес одной единицы товара в килограммах">
+        Вес одной единицы (кг)
+        <input type="number" id="weight" step="0.01" />
+      </label>
+      <label title="Самая длинная сторона одной единицы товара (нужна только для FBO)">
+        Самая длинная сторона (см)
+        <input type="number" id="length" />
+      </label>
+      <label title="Сколько единиц товара вы планируете отгрузить">
+        Количество единиц товара
+        <input type="number" id="quantity" />
+      </label>
+      <label title="Сколько заказов будет собрано (по 1 или нескольким единицам)">
+        Количество заказов
+        <input type="number" id="orders" />
+      </label>
+      <label title="Если вы планируете хранение товара на складе — укажите кол-во дней">
+        Количество дней хранения (необязательно)
+        <input type="number" id="storageDays" />
+      </label>
+      <label title="Указывается для страховки: влияет на расчет сбора за объявленную стоимость">
+        Объявленная стоимость (необязательно)
+        <input type="number" id="declaredValue" />
+      </label>
+      <label title="Экспресс-сборка — ускоренная обработка заказа с выдачей курьеру" style="grid-column: 1 / -1; display: flex; align-items: center;">
+        <input type="checkbox" id="express" style="margin-right: 8px;" /> Экспресс-сборка
+      </label>
+    </div>
+    <div class="calc-actions">
+      <button onclick="runCalculation()">Рассчитать</button>
+      <button onclick="downloadExcel()">Скачать Excel</button>
+    </div>
+    <div id="result"></div>
+    <p class="small">Цены указаны без НДС. Это примерный расчет и не является публичной офертой.</p>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
