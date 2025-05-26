@@ -1,51 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
   <title>Калькулятор фулфилмента</title>
   <link rel="stylesheet" href="style.css" />
-  <style>
-    #form-container {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-    label {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 4px;
-    }
-    input, select {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 16px;
-      box-sizing: border-box;
-    }
-    button {
-      padding: 10px 20px;
-      background-color: #00A65A;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    .buttons {
-      display: flex;
-      gap: 16px;
-      margin-top: 16px;
-    }
-    .note {
-      margin-top: 20px;
-      font-size: 12px;
-      color: #555;
-    }
-  </style>
 </head>
 <body>
   <div id="form-container">
@@ -57,7 +15,6 @@
           <option value="FBO">FBO</option>
           <option value="FBS">FBS</option>
         </select>
-
         <label for="country">Страна:</label>
         <select id="country">
           <option value="Россия">Россия</option>
@@ -72,33 +29,23 @@
           <option value="Испания">Испания</option>
           <option value="Кыргызстан">Кыргызстан</option>
         </select>
-
         <label for="city">Город:</label>
         <input type="text" id="city" />
-
         <label for="weight">Вес (кг):</label>
         <input type="number" id="weight" step="any" />
-
         <label for="length">Самая длинная сторона (см):</label>
         <input type="number" id="length" />
       </div>
       <div>
         <label for="quantity">Количество единиц:</label>
         <input type="number" id="quantity" />
-
         <label for="orders">Количество заказов:</label>
         <input type="number" id="orders" />
-
         <label for="storageDays">Хранение (дней):</label>
         <input type="number" id="storageDays" />
-
         <label for="declaredValue">Объявленная стоимость:</label>
         <input type="number" id="declaredValue" />
-
-        <label>
-          <input type="checkbox" id="express" />
-          Экспресс-сборка
-        </label>
+        <label><input type="checkbox" id="express" /> Экспресс-сборка</label>
       </div>
     </form>
     <div class="buttons">
