@@ -1,26 +1,29 @@
-// Калькулятор фулфилмента — полная версия
-function getCurrency(country) {
-  const map = {
-    'Россия': '₽', 'Казахстан': '₸', 'Беларусь': 'Br', 'Китай': '元',
-    'Азербайджан': '₼', 'Турция': '₺', 'США': '$', 'ОАЭ': 'AED',
-    'Армения': '֏', 'Испания': '€', 'Кыргызстан': 'сом'
-  };
-  return map[country] || '₽';
+function getLimitKey(row) {
+  // Находим ключ лимита: колонку, где есть "До"
+  for (let key in row) {
+    if (key.toLowerCase().includes("до")) return key;
+  }
+  return null;
 }
-function getColumn(country) {
-  const map = {
-    'Россия': 'Рубль (Россия)', 'Казахстан': 'Тенге (Казахстан)', 'Беларусь': 'Белорусский рубль (Беларусь)',
-    'Китай': 'Юань  元 (Китай)', 'Азербайджан': 'Манат azn (Азербайджан)', 'Турция': 'Лира  ₺ (Турция)',
-    'США': 'Доллар, $ (США)', 'ОАЭ': 'AED (ОАЭ)', 'Армения': 'AMD(Армения)', 'Испания': '€ (Испания)',
-    'Кыргызстан': 'Кыргызский сом (Кыргызстан)'
-  };
-  return map[country] || 'Рубль (Россия)';
+
+function getRate(type, value, data, column) {
+  const candidates = data.filter(r => r["Тип операции"]?.trim() === type);
+  console.log(`🔍 Ищу "${type}" при значении ${value}`);
+  console.log(`🔍 Найдено кандидатов:`, candidates);
+  for (let row of candidates) {
+    const limitKey = getLimitKey(row);
+    const limit = parseFloat((row[limitKey] || "").replace(/[^\d.,]/g, "").replace(",", "."));
+    const rate = parseFloat(row[column]);
+    console.log(`ℹ️ Проверка строки: лимит=${limit}, тариф=${rate}`);
+    if (!isNaN(limit) && value <= limit && !isNaN(rate)) {
+      console.log(`✅ Подходит: ${type} | Лимит: ${limit} | Тариф: ${rate}`);
+      return rate;
+    }
+  }
+  console.log(`❌ Не найдено для "${type}" при значении ${value}`);
+  return null;
 }
-function parseLimit(val) {
-  if (!val) return NaN;
-  const m = val.match(/\\d+(\\.\\d+)?/);
-  return m ? parseFloat(m[0]) : NaN;
-}
+
 function runCalculation() {
   const model = document.getElementById("model").value;
   const country = document.getElementById("country").value;
@@ -38,30 +41,19 @@ function runCalculation() {
   fetch("https://script.google.com/macros/s/AKfycbzlnU77HvUMHMW41fGuKl1-gQ3k6s_qSzDYQ_t1IlTu85GGHEtMDSP3Gwm2KX5IPMSZ/exec")
     .then(res => res.json())
     .then(data => {
+      console.log("✅ Получены данные из таблицы:", data);
       const rows = [];
 
-      const getRate = (type, value) => {
-        const candidates = data.filter(r => r["Тип операции"]?.trim() === type);
-        for (let row of candidates) {
-          const limit = parseLimit(row["Unnamed: 1"]);
-          const rate = parseFloat(row[column]);
-          if (!isNaN(limit) && value <= limit && !isNaN(rate)) {
-            return rate;
-          }
-        }
-        return null;
-      };
-
-      const rcp = getRate("Приемка", weight);
+      const rcp = getRate("Приемка", weight, data, column);
       if (rcp !== null) rows.push({ name: "Приемка", quantity, rate: rcp, total: rcp * quantity });
 
       if (model === "FBO") {
-        const prep = getRate("Подготовка товара", length);
+        const prep = getRate("Подготовка товара", length, data, column);
         if (prep !== null) rows.push({ name: "Подготовка товара", quantity, rate: prep, total: prep * quantity });
       }
 
       if (storageDays > 0) {
-        const store = getRate("Хранение", weight);
+        const store = getRate("Хранение", weight, data, column);
         if (store !== null) rows.push({
           name: "Хранение",
           quantity: quantity * storageDays,
@@ -82,7 +74,7 @@ function runCalculation() {
       }
 
       if (model === "FBS") {
-        const delivery = getRate("Доставка", weight);
+        const delivery = getRate("Доставка", weight, data, column);
         if (delivery !== null) rows.push({ name: "Доставка", quantity: 1, rate: delivery, total: delivery });
       }
 
@@ -95,6 +87,7 @@ function runCalculation() {
       document.getElementById("result").innerHTML = html;
     });
 }
+
 function downloadExcel() {
   let table = document.querySelector("#result table");
   if (!table) return alert("Сначала выполните расчет");
