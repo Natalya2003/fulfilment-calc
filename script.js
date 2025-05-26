@@ -1,3 +1,4 @@
+// Калькулятор фулфилмента — полная версия
 function getCurrency(country) {
   const map = {
     'Россия': '₽', 'Казахстан': '₸', 'Беларусь': 'Br', 'Китай': '元',
@@ -37,24 +38,17 @@ function runCalculation() {
   fetch("https://script.google.com/macros/s/AKfycbzlnU77HvUMHMW41fGuKl1-gQ3k6s_qSzDYQ_t1IlTu85GGHEtMDSP3Gwm2KX5IPMSZ/exec")
     .then(res => res.json())
     .then(data => {
-      console.log("✅ Получены данные из таблицы:", data);
-
       const rows = [];
 
       const getRate = (type, value) => {
         const candidates = data.filter(r => r["Тип операции"]?.trim() === type);
-        console.log(`🔍 Ищу "${type}" при значении ${value}`);
-        console.log(`🔍 Найдено кандидатов:`, candidates);
         for (let row of candidates) {
           const limit = parseLimit(row["Unnamed: 1"]);
           const rate = parseFloat(row[column]);
-          console.log(`ℹ️ Проверка строки: лимит=${limit}, тариф=${rate}`);
           if (!isNaN(limit) && value <= limit && !isNaN(rate)) {
-            console.log(`✅ Подходит: ${type} | Лимит: ${limit} | Тариф: ${rate}`);
             return rate;
           }
         }
-        console.log(`❌ Не найдено для "${type}" при значении ${value}`);
         return null;
       };
 
