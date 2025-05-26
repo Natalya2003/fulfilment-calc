@@ -18,7 +18,7 @@ function getColumn(country) {
 }
 function parseLimit(val) {
   if (!val) return NaN;
-  const m = val.match(/\d+(\.\d+)?/);
+  const m = val.match(/\\d+(\\.\\d+)?/);
   return m ? parseFloat(m[0]) : NaN;
 }
 function runCalculation() {
@@ -96,5 +96,8 @@ function runCalculation() {
     });
 }
 function downloadExcel() {
-  alert("Экспорт отключён в демо-версии");
+  let table = document.querySelector("#result table");
+  if (!table) return alert("Сначала выполните расчет");
+  let wb = XLSX.utils.table_to_book(table);
+  XLSX.writeFile(wb, "fulfillment.xlsx");
 }
